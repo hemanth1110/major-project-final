@@ -1,0 +1,38 @@
+.container{
+    width: 80vw; /* Can be in percentage also. */
+    height: auto;
+    margin: 0 auto;
+    /* background-color: black; */
+    margin-bottom: 4vh;
+    text-align: center;
+    position: relative;
+}
+
+.set-style{
+    background-color: aqua;
+}
+
+/* .set-bor{
+    border: 1px solid black;
+} */
+
+#qrcode{
+    text-align: center;
+}
+ 
+.btn-c{
+    width: 20vw;
+    height: 20vh;
+}
+ 
+#trans{
+    display: none;
+}
+ 
+#show{
+    display: none;
+}
+ 
+#insert{
+    display: none;
+}

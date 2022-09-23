@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+    <script src="qrcode.min.js"></script>
+    <script src="html5-qrcode.min.js"></script>
+ 
+ 
+</head>
+<body>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+ 
+    <script>
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "uint32",
+				"name": "unique_id",
+				"type": "uint32"
+			},
+			{
+				"internalType": "string",
+				"name": "prod_name",
+				"type": "string"
+			}
+		],
+		"name": "add_product_details",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint32",
+				"name": "product_id",
+				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "new_address",
+				"type": "address"
+			}
+		],
+		"name": "transfer_owner_ship",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"name": "all_product_details",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "unique_product_id",
+				"type": "uint32"
+			},
+			{
+				"internalType": "string",
+				"name": "product_name",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "curr_owner_address",
+				"type": "address"
+			},
+			{
+				"internalType": "enum fakeProductDetection.owner_status",
+				"name": "curr_owner_state",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+ 
+      async function connectToWallet(){
+        if(typeof window.ethereum !== undefined){
+        await ethereum.request({method:"eth_requestAccounts"});
+        }
+        console.log("already connected")
+      }
+ 
+      async function insertIntoBlockChain(){
+ 
+        ui = document.getElementById("unique-product-id").value;
+        un = document.getElementById("product-name").value;
+ 
+        contract = new ethers.Contract("0xe0F2eA35537f043F497e53e04876051893B7F41B",abi,signer);
+        res = await contract.add_product_details(ui,un);
+        console.log(res);
+ 
+        hash = res["hash"];
+        console.log(hash);
+        alert_message = "data inserted into blockchain sucessfully \n transaction hash :"+ hash;
+        alert(alert_message);
+ 
+      }
+ 
+      async function transferOwnerShip(){
+ 
+        ui = document.getElementById("t-a").value;
+        ua = document.getElementById("t-d").value;
+ 
+        contract = new ethers.Contract("0xe0F2eA35537f043F497e53e04876051893B7F41B",abi,signer);
+        res = await contract.transfer_owner_ship(ui,ua);
+        console.log(res);
+ 
+      }
+ 
+    </script>
+    <div class="container" id="btn-g">
+        <div onclick="button_c()" class="container">
+            <button class="btn-c">create new product and insert into blockchain</button>
+        </div>
+        <div onclick= "button_t()" class="container">
+            <button class="btn-c">transfer ownership of product</button>
+        </div>
+        <div onclick= "button_g()" class="container">
+            <button class="btn-c">get product details using qr-code generated</button>
+        </div>
+    </div>
+    <div>
+        <div id="insert" class="container">
+            <div class="container">
+                Product Unique Id
+            </div>
+            <div class="container">
+                <input type="text" id="unique-product-id">
+            </div>
+            <div class="container">
+                Product Name
+            </div>
+            <div class="container">
+                <input type="text" id="product-name">
+            </div>
+            <div class="container">
+                <button onclick="generateQR()">generate qr</button>
+            </div>
+            <div class="container">
+                <button onclick="connectToWallet()">connect wallet</button>
+            </div>
+            <div class="container">
+                <button onclick="insertIntoBlockChain()">insert into block chain</button>
+            </div>
+            <div class="container" id="qrcode"></div>
+        </div>
+        <div id="show" class="container">
+            <div class="row container">
+                <div class="col container">
+                  <div class = "container "style="width:500px;" id="reader"></div>
+                </div>
+                <div id="get-toggle" style="display: none;" class="col container" style="padding:30px;">
+                  <div class ="container" id="result">
+                    <div class="container set-bor">product id</div>
+                    <div class="container set-style" id = "set-i"></div>
+                    <div class="container set-bor">product name</div>
+                    <div class="container set-style" id = "set-n"></div>
+                    <div class="container set-bor">product current owner address</div>
+                    <div class="container set-style" id = "set-a"></div>
+                    <div class="container set-bor">product holder</div>
+                    <div class="container set-style" id = "set-s"></div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div id = "trans"class="container">
+            <div class="container">enter product unique id</div>
+            <div class="container">
+                <input type="text" id="t-a" style="width:25vw" class="container">
+            </div><div class="container">enter the receiver address</div>
+            <div class="container">
+                <input type="text" id="t-d" style="width:70vw" class="container">
+            </div>
+            <div class="container">
+                <button onclick="transferOwnerShip()">transfer ownership</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        async function onScanSuccess(qrCodeMessage) {
+            contract = new ethers.Contract("0xe0F2eA35537f043F497e53e04876051893B7F41B",abi,provider);
+            res = await contract.all_product_details(qrCodeMessage);
+            document.getElementById("get-toggle").style.display="block";
+            document.getElementById("set-i").innerHTML = res[0];
+            document.getElementById("set-n").innerHTML = res[1];
+            document.getElementById("set-a").innerHTML = res[2];
+            stat_prod = res[3];
+            if(stat_prod == 0){
+                document.getElementById("set-s").innerHTML = "with_owner";
+ 
+            }else if(stat_prod == 1){
+                document.getElementById("set-s").innerHTML = "with_retailer";
+            }else{
+                document.getElementById("set-s").innerHTML = "with_customer";
+            }
+        }
+        function onScanError(errorMessage) {
+          //handle scan error
+        }
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+ 
+ 
+    </script>
+</body>
+</html>
